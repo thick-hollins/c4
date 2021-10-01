@@ -1,33 +1,16 @@
 import { makeVerticals, makeCW, makeCCW } from './findLines'
+import { threeOfFour, platform } from './sequences'
 
 const findHKO = (board) => {
     let potentialHKOs = []
     board.forEach((line, y) => {
-      for (let x = 0; x < 5; x++) {
-        if (line[x] === 'x' && line[x + 1] === 'x' && line[x + 2] === 'x') {
-          if (line[x - 1] === null) {
-            potentialHKOs.push({ y, x: x - 1 })
-          }
-          if (line[x + 3] === null) {
-            potentialHKOs.push({ y, x: x + 3 })
-          }
-        }
-      }
-      for (let x = 0; x < 4; x++) {
-        if (line[x] === 'x' && line[x + 3] === 'x') {
-          if (line[x + 1] === 'x' && line[x + 2] === null) potentialHKOs.push ({y, x: x + 2}) 
-          if (line[x + 2] === 'x' && line[x + 1] === null) potentialHKOs.push ({y, x: x + 1}) 
-        }
+      for (let i = 0; i < 4; i++) {
+        let x = threeOfFour(line.slice(i, i + 4), 'x')
+        if (x !== undefined) potentialHKOs.push({y, x: x + i})
       }
     })
     for (let potentialHKO of potentialHKOs) {
-      let platform = true
-      for (let y = potentialHKO.y + 1; y < 6; y++) {
-        if (board[y][potentialHKO.x] === null) {
-          platform = false
-        }
-      }
-      if (platform) return potentialHKO
+      if (platform(board, potentialHKO)) return potentialHKO
     }
   }
   

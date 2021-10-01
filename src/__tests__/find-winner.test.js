@@ -1,4 +1,4 @@
-import { findWinner, makeCW, makeCCW, reverseCWshift, reverseCCWshift } from '../findLines'
+import { findWinner, makeCW, makeCCW } from '../findLines'
 
 describe('findWinner()', () => {
   it('no winner, false', () => {
@@ -128,89 +128,5 @@ describe('makeCCW', () => {
       [null, null, null, null, null],
       [null, null, null, null],
     ])
-  });
-});
-describe('reverseCWshift', () => {
-  it.only('should ', () => {
-    const shifted = [
-      [null, null, null, null],
-      [null, null, null, null, null],
-      ["x", "x", "x", null, "x", null],
-      [null, null, null, null, null, null],
-      [null, null, null, null, null], 
-      [null, null, null, null]
-    ]
-    expect(reverseCWshift(shifted)).toEqual(
-      [
-      [null, null, null, null, null, null, null],
-      [null, null, null, null, 'x', null, null],
-      [null, null, null, null, null, null, null],
-      [null, null, 'x', null, null, null, null],
-      [null, 'x', null, null, null, null, null],
-      ['x', null, null, null, null, null, null]
-    ]
-    )
-  });
-  it('should ', () => {
-    const shifted = [
-      [null, null, null, null],
-      [null, null, null, null, null],
-      [null, null, null, null, null, null],
-      [null, null, null, null, null, null],
-      [null, null, null, null, null], 
-      ['x', 'x', 'x', 'x']
-    ]
-    expect(reverseCWshift(shifted)).toEqual(
-      [
-      [null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, 'x'],
-      [null, null, null, null, null, 'x', null],
-      [null, null, null, null, 'x', null, null],
-      [null, null, null, 'x', null, null, null]
-    ]
-    )
-  });
-});
-describe('reverseCCWshift', () => {
-  it('should ', () => {
-    const shifted = [
-      [null, null, null, null],
-      [null, null, null, null, null],
-      [null, null, null, null, null, null],
-      [null, null, null, null, null, null],
-      [null, null, null, null, null], 
-      ['o', 'o', 'o', 'o']
-    ]
-    expect(reverseCCWshift(shifted)).toEqual(
-      [
-        [null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null],
-        ['o', null, null, null, null, null, null],
-        [null, 'o', null, null, null, null, null],
-        [null, null, 'o', null, null, null, null],
-        [null, null, null, 'o', null, null, null]
-      ]
-    )
-  });
-  it('should ', () => {
-    const shifted = [
-      [null, null, null, null],
-      [null, null, null, null, null],
-      [null, null, null, null, null, null],
-      ['x', 'x', 'x', 'x', null, null],
-      [null, null, null, null, null], 
-      ['o', 'o', 'o', 'o']
-    ]
-    expect(reverseCCWshift(shifted)).toEqual(
-      [
-        ['x', null, null, null, null, null, null],
-        [null, 'x', null, null, null, null, null],
-        ['o', null, 'x', null, null, null, null],
-        [null, 'o', null, 'x', null, null, null],
-        [null, null, 'o', null, null, null, null],
-        [null, null, null, 'o', null, null, null]
-      ]
-    )
   });
 });

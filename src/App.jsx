@@ -1,6 +1,7 @@
+import './App.css'
 import { useState, useEffect } from 'react'
-import { findWinner } from './findLines'
 import { findKO } from './blocking'
+import { findWinningMove, findWinner } from './winning'
 
 const App = () => {
   const [gridActive, setGridActive] = useState(true)
@@ -67,9 +68,12 @@ const App = () => {
     if (!result && playing === 'o') {
       // computer chooses move
       let move
+      let winningMove = findWinningMove(game)
       let block = findKO(game)
-      if (block) move = block
+      if (winningMove) move = winningMove
+      else if (block) move = block
       else {
+        // random move
         while (!move) {
           let randomX = Math.floor(Math.random() * 7)
           let emptyY
@@ -104,36 +108,38 @@ const App = () => {
   }, [grid, playing])
 
   return (
-    <>
-      <div style={ {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(7, 50px)',
-        gridTemplateRows: '50px 10px repeat(6, 50px)',
-        gridGap: '1px'      } }>
-        { grid.map((_, y) => _.map((_, x) => (
-          <div 
-            key={ `${ y }-${ x }` }
-            style={ {
-              width: 50,
-              height: y === 1 ? 10 : 50, 
-              border: y > 1 ? "solid darkgrey" : "none"
-            } }
-            onClick={ () => {
-              gridActive && handleClick(x)
-            } } 
-            >
-              <svg viewBox="0 0 50 50">
-                <circle cx="25" cy="25" r="20" 
-                  fill={ grid[y][x] === null ? 'white' : grid[y][x] === 'x' ? '#FFC300' : 'red' }
-                />
-              </svg>
-            </div>
-          )
-        )) }
+    <div className="wrapper">
+      <div className="game">
+        <div style={ {
+          display: 'grid',
+          gridTemplateColumns: 'repeat(7, 50px)',
+          gridTemplateRows: '50px 10px repeat(6, 50px)',
+          gridGap: '1px' } }>
+          { grid.map((_, y) => _.map((_, x) => (
+            <div 
+              key={ `${ y }-${ x }` }
+              style={ {
+                width: 50,
+                height: y === 1 ? 10 : 50, 
+                border: y > 1 ? "dotted darkgrey" : "none"
+              } }
+              onClick={ () => {
+                gridActive && handleClick(x)
+              } } 
+              >
+                <svg viewBox="0 0 50 50">
+                  <circle cx="25" cy="25" r="20" 
+                    fill={ grid[y][x] === null ? '#001721' : grid[y][x] === 'x' ? '#FFC300' : 'red' }
+                  />
+                </svg>
+              </div>
+            )
+          )) }
+        </div>
+        { winner ? winner === 'x' ? <p>Yellow wins!</p> : <p>Red wins!</p> : '' }
+        {winner && <p>click to start again</p>}
       </div>
-      { winner ? winner === 'x' ? <p>Yellow wins!</p> : <p>Red wins!</p> : '' }
-      {winner && <p>click to start again</p>}
-    </>
+    </div>
   )
 }
 

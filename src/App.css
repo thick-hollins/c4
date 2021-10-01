@@ -1,0 +1,16 @@
+body {
+    background-color: #001721;
+    font-family: 'Consolas';
+}
+p {
+    color: darkgray;
+}
+.wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.game {
+    display: flex;
+    flex-direction: column;
+}
