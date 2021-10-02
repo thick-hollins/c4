@@ -3,6 +3,7 @@ import { generateGrid } from './generate-grid'
 import { useState, useEffect } from 'react'
 import { findKO } from './blocking'
 import { findWinner } from './winner'
+import { findWinningMove } from './attacking'
 
 const App = () => {
   const [gridActive, setGridActive] = useState(true)
@@ -50,8 +51,10 @@ const App = () => {
     if (result) setWinner(result)
     if (!result && playing === 'o') {
       let move
+      let winningMove = findWinningMove(grid)
+      if (winningMove) move = winningMove
       let block = findKO(grid)
-      if (block) move = block
+      if (block && !winningMove) move = block
       else {
         while (!move) {
           let randomX = Math.floor(Math.random() * 7)
