@@ -1,4 +1,5 @@
-import { findWinner, makeCW, makeCCW } from '../findLines'
+import { makeCW, makeCCW, reverseCCW } from '../findLines'
+import { findWinner } from '../winning'
 
 describe('findWinner()', () => {
   it('no winner, false', () => {
@@ -127,6 +128,52 @@ describe('makeCCW', () => {
       [null, null, null, null, null, null],
       [null, null, null, null, null],
       [null, null, null, null],
+    ])
+  });
+  it('should ', () => {
+    const board = [
+      [null, null, null, 'x', null, null, null],
+      [null, null, null, null, 'x', null, null],
+      [null, null, 'o', null, null, 'x', null],
+      [null, null, null, 'o', null, null, 'x'],
+      [null, null, null, null, 'o', null, null],
+      [null, null, null, null, null, 'o', null]
+    ]
+    expect(makeCCW(board)).toEqual([
+      ['x', 'x', 'x', 'x'],
+      [null, null, null, null, null],
+      [null, null, null, null, null, null],
+      [null, null, 'o', 'o', 'o', 'o'],
+      [null, null, null, null, null],
+      [null, null, null, null],
+    ])
+  })
+});
+describe('reverseCCW', () => {
+  it.only('should ', () => {
+    const board = [
+      ['x', 'x', 'x', 'x'],
+      [null, null, null, null, null],
+      ['z', null, null, null, null, null],
+      [null, null, 'o', 'o', 'o', 'o'],
+      ['y', null, null, null, null],
+      [null, null, null, null],
+    ]
+    const board2 = [
+      [null, null,  'x',  'x',  'x',  'x'],
+      [null, null, null, null, null, null],
+      [ 'z', null, null, null, null, null],
+      [null, null,  'o',  'o',  'o',  'o'],
+      [ 'y', null, null, null, null],
+      [null, null, null, null],
+    ]
+    expect(reverseCCW(board)).toEqual([
+      [null, 'z', null, 'x', null, null, null],
+      ['y', null, null, null, 'x', null, null],
+      [null, null, 'o', null, null, 'x', null],
+      [null, null, null, 'o', null, null, 'x'],
+      [null, null, null, null, 'o', null, null],
+      [null, null, null, null, null, 'o', null]
     ])
   });
 });

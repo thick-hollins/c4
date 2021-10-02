@@ -1,58 +1,42 @@
 import './App.css'
+import { generateGrid } from './generate-grid'
 import { useState, useEffect } from 'react'
 import { findKO } from './blocking'
-import { findWinningMove, findWinner } from './winning'
+import { findWinner } from './winner'
 
 const App = () => {
   const [gridActive, setGridActive] = useState(true)
   const [placed, setPlaced] = useState(-1)
   const [playing, setPlaying] = useState('x')
   const [winner, setWinner] = useState(null)
-  const [grid, setGrid] = useState(() => Array.from(Array(8), () => Array.from(Array(7), () => null)))
+  const [grid, setGrid] = useState(() => generateGrid())
 
   const resetGame = () => {
-    setGrid(Array.from(Array(8), () => Array.from(Array(7), () => null)))
+    setGrid(generateGrid())
     setPlaced(-1)
     setWinner(null)
     setPlaying('x')
     setGridActive(true)
   }
 
-  const handleClick = (x) => {
+  const handleClick = (col) => {
     if (winner) {
       resetGame()
     } else {
       let emptyY
-      for (let i = 2; i < 8; i++) {
-          if (!grid[i][x]) {
+      for (let i = 0; i < 6; i++) {
+          if (!grid[i][col].value) {
               emptyY = i
           }
       }
       if (emptyY) {
-        // if column is not full
-        if (placed === -1) {
-          // place cursor if not yet placed
+        if (placed === -1 || col !== placed) {
+          setPlaced(col)
+        } else if (placed === col) {
           setGrid(grid => {
-            let firstRow = Array.from(Array(7), () => null)
-            firstRow[x] = 'x'
-            return [firstRow, ...grid.slice(1)]
-          })
-          setPlaced(x)
-        }
-        if (placed >= 0 && x !== placed) {
-          // move cursor
-          setGrid(grid => {
-            let firstRow = Array.from(Array(7), () => null)
-            firstRow[x] = 'x'
-            return [firstRow, ...grid.slice(1)]
-          })
-          setPlaced(x)
-        } else if (placed === x) {
-          // play move if confirmed
-          setGrid(grid => {
-            let newGrid = grid.slice(1)
-            newGrid[emptyY - 1][x] = 'x'
-            return [Array.from(Array(7), () => null), ...newGrid]
+            let newGrid = [...grid]
+            newGrid[emptyY][col].value = 'x'
+            return newGrid
           })
           setPlaced(-1)
           setPlaying('o')
@@ -61,48 +45,38 @@ const App = () => {
     }
   }
 
-  useEffect(() => {    
-    let game = grid.slice(2)
-    let result = findWinner(game)
+  useEffect(() => { 
+    let result = findWinner(grid)
     if (result) setWinner(result)
     if (!result && playing === 'o') {
-      // computer chooses move
       let move
-      let winningMove = findWinningMove(game)
-      let block = findKO(game)
-      if (winningMove) move = winningMove
-      else if (block) move = block
+      let block = findKO(grid)
+      if (block) move = block
       else {
-        // random move
         while (!move) {
           let randomX = Math.floor(Math.random() * 7)
           let emptyY
-          for (let i = 2; i < 8; i++) {
-              if (!grid[i][randomX]) {
+          for (let i = 0; i < 6; i++) {
+              if (!grid[i][randomX].value) {
                   emptyY = i
               }
           }
-        if (emptyY) move = { y: emptyY - 2, x: randomX }
+        if (emptyY) move = { y: emptyY, x: randomX }
         }
       }
       setTimeout(() => {
-        setGrid(grid => {
-          // computer places cursor
-          let firstRow = Array.from(Array(7), () => null)
-          firstRow[move.x] = 'o'
-          return [firstRow, ...grid.slice(1)]
-        })
+        setPlaced(move.x)
         setTimeout(() => {
-          // computer moves
+          setPlaying('x')
+          setPlaced(-1)
           setGrid(grid => {
-            let newGrid = grid.slice(1)
-            newGrid[move.y + 1][move.x] = 'o'
-            return [Array.from(Array(7), () => null), ...newGrid]
+            let newGrid = [...grid]
+            newGrid[move.y][move.x].value = 'o'
+            return newGrid
           })
           setGridActive(true)
         }, 800)
       }, 1000)
-      setPlaying('x')
       setGridActive(false)
     }
   }, [grid, playing])
@@ -115,21 +89,35 @@ const App = () => {
           gridTemplateColumns: 'repeat(7, 50px)',
           gridTemplateRows: '50px 10px repeat(6, 50px)',
           gridGap: '1px' } }>
+          { Array.from(Array(7)).map((_, i) => (
+            <div
+            key={ `${ i }` }
+            style={ { width: 50, height: 50, border: "none" } }
+            onClick={ () => gridActive && handleClick(i) } 
+            >
+              <svg viewBox="0 0 50 50">
+                <circle cx="25" cy="25" r="20" 
+                  fill={ i !== placed ? '#001721' : playing === 'x' ? '#FFC300' : 'red' }
+                />
+              </svg>
+            </div>
+          )) }
+          { Array.from(Array(7), () => null).map((_, j) => (
+            <div
+            key={ `${ j }divider` }
+            style={ { width: 50, height: 20, border: "none" } }
+            >
+            </div>
+          )) }
           { grid.map((_, y) => _.map((_, x) => (
             <div 
               key={ `${ y }-${ x }` }
-              style={ {
-                width: 50,
-                height: y === 1 ? 10 : 50, 
-                border: y > 1 ? "dotted darkgrey" : "none"
-              } }
-              onClick={ () => {
-                gridActive && handleClick(x)
-              } } 
+              style={ { width: 50, height: 50, border: "dotted darkgrey" } }
+              onClick={ () => gridActive && handleClick(x) } 
               >
                 <svg viewBox="0 0 50 50">
                   <circle cx="25" cy="25" r="20" 
-                    fill={ grid[y][x] === null ? '#001721' : grid[y][x] === 'x' ? '#FFC300' : 'red' }
+                    fill={ grid[y][x].value === null ? '#001721' : grid[y][x].value === 'x' ? '#FFC300' : 'red' }
                   />
                 </svg>
               </div>
