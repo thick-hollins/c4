@@ -10,19 +10,24 @@ const platform = (grid, position) => {
   return platform
 }
 
+export const emptyY = (grid, x) => {
+  let empty
+  for (let i = 0; i < 6; i++) {
+    if (!grid[i][x].value) {
+        empty = i
+    }
+  }
+  return empty
+}
+
 const threeOfFour = (arr, player) => {
-  if (arr[0].value === null && arr[1].value === player && arr[2].value === player && arr[3].value === player) {
-    return 0
-  }
-  if (arr[0].value === player && arr[1].value === null && arr[2].value === player && arr[3].value === player) {
-    return 1
-  }
-  if (arr[0].value === player && arr[1].value === player && arr[2].value === null && arr[3].value === player) {
-    return 2
-  }
-  if (arr[0].value === player && arr[1].value === player && arr[2].value === player && arr[3].value === null) {
-    return 3
-  }
+  let nullIndex
+  let playerCount = 0
+  arr.forEach((el, y) => {
+    if (el.value === null) nullIndex = y
+    if (el.value === player) playerCount++
+  })
+  if (nullIndex && playerCount === 3) return nullIndex
 }
 
 export const threeHorizontal = (grid, player) => {
@@ -33,15 +38,13 @@ export const threeHorizontal = (grid, player) => {
       if (sliceIndex !== undefined) horizontals.push({ y, x: sliceIndex + i })
     }
   })
-  return horizontals.filter(horizontal => {
-    return platform(grid, horizontal)
-  })
+  return horizontals.filter(horizontal => platform(grid, horizontal))
 }
 
 export const threeVertical = (grid, player) => {
-  let vLines = makeVerticals(grid)
+  let lines = makeVerticals(grid)
   let verticals = []
-  vLines.forEach((line, x) => {
+  lines.forEach((line, x) => {
     for (let y = 0; y < 3; y++) {
       if (line[y].value === player && 
           line[y + 1].value === player && 
@@ -55,9 +58,9 @@ export const threeVertical = (grid, player) => {
 }
 
 export const threeDiagonal = (grid, player) => {
-  let diagonalLines = makeCW(grid).concat(makeCCW(grid))
+  let lines = makeCW(grid).concat(makeCCW(grid))
   let diagonals = []
-  diagonalLines.forEach((line, y) => {
+  lines.forEach((line, y) => {
     for (let i = 0; i < line.length - 3; i++) {
       let sliceIndex = threeOfFour(line.slice(i, i + 4), player)
       if (sliceIndex !== undefined) diagonals.push(
@@ -65,7 +68,5 @@ export const threeDiagonal = (grid, player) => {
         )
     }
   })
-  return diagonals.filter(diagonal => {
-    return platform(grid, diagonal)
-  })
+  return diagonals.filter(diagonal => platform(grid, diagonal))
 }

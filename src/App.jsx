@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { findKO } from './blocking'
 import { findWinner } from './winner'
 import { findWinningMove } from './attacking'
+import { emptyY } from './sequences'
 
 const App = () => {
   const [gridActive, setGridActive] = useState(true)
@@ -20,23 +21,18 @@ const App = () => {
     setGridActive(true)
   }
 
-  const handleClick = (col) => {
+  const handleClick = (x) => {
     if (winner) {
       resetGame()
     } else {
-      let emptyY
-      for (let i = 0; i < 6; i++) {
-          if (!grid[i][col].value) {
-              emptyY = i
-          }
-      }
-      if (emptyY) {
-        if (placed === -1 || col !== placed) {
-          setPlaced(col)
-        } else if (placed === col) {
+      let y = emptyY(grid, x)
+      if (y) {
+        if (placed === -1 || x !== placed) {
+          setPlaced(x)
+        } else if (placed === x) {
           setGrid(grid => {
             let newGrid = [...grid]
-            newGrid[emptyY][col].value = 'x'
+            newGrid[y][x].value = 'x'
             return newGrid
           })
           setPlaced(-1)
@@ -53,18 +49,15 @@ const App = () => {
       let move
       let winningMove = findWinningMove(grid)
       if (winningMove) move = winningMove
-      let block = findKO(grid)
-      if (block && !winningMove) move = block
       else {
+        let block = findKO(grid)
+        if (block) move = block
+      }
+      if (!move) {
         while (!move) {
           let randomX = Math.floor(Math.random() * 7)
-          let emptyY
-          for (let i = 0; i < 6; i++) {
-              if (!grid[i][randomX].value) {
-                  emptyY = i
-              }
-          }
-        if (emptyY) move = { y: emptyY, x: randomX }
+          let y = emptyY(grid, randomX)
+        if (y) move = { y, x: randomX }
         }
       }
       setTimeout(() => {
@@ -100,7 +93,12 @@ const App = () => {
             >
               <svg viewBox="0 0 50 50">
                 <circle cx="25" cy="25" r="20" 
-                  fill={ i !== placed ? '#001721' : playing === 'x' ? '#FFC300' : 'red' }
+                  fill={ 
+                    i !== placed 
+                    ? '#001721' 
+                    : playing === 'x' 
+                    ? '#FFC300' 
+                    : 'red' }
                 />
               </svg>
             </div>
@@ -120,7 +118,12 @@ const App = () => {
               >
                 <svg viewBox="0 0 50 50">
                   <circle cx="25" cy="25" r="20" 
-                    fill={ grid[y][x].value === null ? '#001721' : grid[y][x].value === 'x' ? '#FFC300' : 'red' }
+                    fill={ 
+                      grid[y][x].value === null 
+                      ? '#001721' 
+                      : grid[y][x].value === 'x' 
+                      ? '#FFC300' 
+                      : 'red' }
                   />
                 </svg>
               </div>

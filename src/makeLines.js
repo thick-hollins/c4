@@ -1,14 +1,14 @@
 export const makeCW = (grid) => {
   let rows = []
   for (let y = 3; y <= 8; y++) {
-    let newRowCW = []
+    let newRow = []
     for (let x = 0; x < 7; x++ ) {
-      let yCW = y - x
-      if (grid[yCW]) {
-        newRowCW.push(grid[yCW][x])
+      let shiftedY = y - x
+      if (grid[shiftedY]) {
+        newRow.push(grid[shiftedY][x])
       }
     }
-    rows.push(newRowCW)
+    rows.push(newRow)
   }
   return rows
 }
@@ -16,20 +16,20 @@ export const makeCW = (grid) => {
 export const makeCCW = (grid) => {
   let rows = []
   for (let y = -3; y <= 2; y++) {
-    let newRowCCW = []
+    let newRow = []
     for (let x = 0; x < 7; x++ ) {
-      let yCCW = y + x
-      if (grid[yCCW]) {
-        newRowCCW.push(grid[yCCW][x])
+      let shiftedY = y + x
+      if (grid[shiftedY]) {
+        newRow.push(grid[shiftedY][x])
       }
     }
-    rows.push(newRowCCW)
+    rows.push(newRow)
   }
   return rows
 }
 
 export const makeVerticals = (grid) => {
-  let newGrid = Array(7).fill(null).map(el => Array(6))
-  grid.forEach((row, y) => row.forEach((col, x) => newGrid[x][y] = grid[5 - y][x]))
+  let newGrid = Array.from(Array(7), () => Array(6))
+  grid.forEach((row, y) => row.forEach((_, x) => newGrid[x][y] = grid[5 - y][x]))
   return newGrid
 }
