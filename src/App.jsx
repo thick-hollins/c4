@@ -26,7 +26,7 @@ const App = () => {
       resetGame()
     } else {
       let y = emptyY(grid, x)
-      if (y) {
+      if (y !== undefined) {
         if (placed === -1 || x !== placed) {
           setPlaced(x)
         } else if (placed === x) {
@@ -57,7 +57,7 @@ const App = () => {
         while (!move) {
           let randomX = Math.floor(Math.random() * 7)
           let y = emptyY(grid, randomX)
-        if (y) move = { y, x: randomX }
+        if (y !== undefined) move = { y, x: randomX }
         }
       }
       setTimeout(() => {
