@@ -2,7 +2,7 @@ import './App.css'
 import { generateGrid } from './generate-grid'
 import { useState, useEffect } from 'react'
 import { findKO } from './blocking'
-import { findWinner } from './winner'
+import { findWinner, findDraw } from './winner'
 import { findWinningMove } from './attacking'
 import { emptyY } from './sequences'
 
@@ -10,19 +10,19 @@ const App = () => {
   const [gridActive, setGridActive] = useState(true)
   const [placed, setPlaced] = useState(-1)
   const [playing, setPlaying] = useState('x')
-  const [winner, setWinner] = useState(null)
+  const [complete, setComplete] = useState(null)
   const [grid, setGrid] = useState(() => generateGrid())
 
   const resetGame = () => {
     setGrid(generateGrid())
     setPlaced(-1)
-    setWinner(null)
+    setComplete(null)
     setPlaying('x')
     setGridActive(true)
   }
 
   const handleClick = (x) => {
-    if (winner) {
+    if (complete) {
       resetGame()
     } else {
       let y = emptyY(grid, x)
@@ -43,9 +43,13 @@ const App = () => {
   }
 
   useEffect(() => { 
-    let result = findWinner(grid)
-    if (result) setWinner(result)
-    if (!result && playing === 'o') {
+    let winner = findWinner(grid)
+    let draw
+    if (!winner)
+    draw = findDraw(grid)
+    if (winner) setComplete(winner)
+    if (draw) setComplete('draw')
+    if (!winner && !draw && playing === 'o') {
       let move
       let winningMove = findWinningMove(grid)
       if (winningMove) move = winningMove
@@ -130,8 +134,9 @@ const App = () => {
             )
           )) }
         </div>
-        { winner ? winner === 'x' ? <p>Yellow wins!</p> : <p>Red wins!</p> : '' }
-        {winner && <p>click to start again</p>}
+        { complete ? complete === 'x' ? <p>Yellow wins!</p> : <p>Red wins!</p> : '' }
+        { complete && complete === 'draw' && <p>It's a draw!</p> }
+        {complete && <p>click to start again</p>}
       </div>
     </div>
   )

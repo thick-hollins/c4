@@ -19,3 +19,7 @@ export const findWinner = (grid) => {
     }
     return false
 }
+
+export const findDraw = (grid) => {
+    return grid.every(y => y.every(x => x.value !== null))
+}
