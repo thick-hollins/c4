@@ -134,7 +134,12 @@ const App = () => {
             )
           )) }
         </div>
-        { complete ? complete === 'x' ? <p>Yellow wins!</p> : <p>Red wins!</p> : '' }
+        { complete 
+          && complete === 'x' 
+          ? <p>Yellow wins!</p> 
+          : complete === 'o' 
+          ? <p>Red wins!</p> 
+          : '' }
         { complete && complete === 'draw' && <p>It's a draw!</p> }
         {complete && <p>click to start again</p>}
       </div>
