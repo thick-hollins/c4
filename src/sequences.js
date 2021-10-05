@@ -21,13 +21,14 @@ export const emptyY = (grid, x) => {
 }
 
 const threeOfFour = (arr, player) => {
+  console.log(arr)
   let nullIndex
   let playerCount = 0
   arr.forEach((el, y) => {
     if (el.value === null) nullIndex = y
     if (el.value === player) playerCount++
   })
-  if (nullIndex && playerCount === 3) return nullIndex
+  if (nullIndex !== undefined && playerCount === 3) return nullIndex
 }
 
 export const threeHorizontal = (grid, player) => {
