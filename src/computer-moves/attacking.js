@@ -1,4 +1,4 @@
-import { threeHorizontal, threeDiagonal, threeVertical } from './sequences'
+import { threeHorizontal, threeDiagonal, threeVertical } from '../sequences'
 
 export const findWinningMove = (grid) => {
   let hWMs = threeHorizontal(grid, 'o')

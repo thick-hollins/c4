@@ -1,4 +1,4 @@
-import { threeHorizontal, threeDiagonal, threeVertical } from './sequences'
+import { threeHorizontal, threeDiagonal, threeVertical } from '../sequences'
 
 export const findKO = (grid) => {
   let hKOs = threeHorizontal(grid, 'x')

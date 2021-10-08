@@ -1,5 +1,12 @@
-import { makeCW, makeCCW, reverseCCW } from '../findLines'
-import { findWinner } from '../winning'
+import { makeCW, makeCCW } from '../makeLines'
+import { findWinner } from '../winner'
+import { twoOfFour } from '../sequences'
+
+export const mapGrid = (grid) => {
+  return Array.from(Array(6), (_, y) => Array.from(Array(7), (_, x) => {
+      return { value: grid[y][x], y, x }
+  }))
+}
 
 describe('findWinner()', () => {
   it('no winner, false', () => {
@@ -149,31 +156,8 @@ describe('makeCCW', () => {
     ])
   })
 });
-describe('reverseCCW', () => {
-  it.only('should ', () => {
-    const board = [
-      ['x', 'x', 'x', 'x'],
-      [null, null, null, null, null],
-      ['z', null, null, null, null, null],
-      [null, null, 'o', 'o', 'o', 'o'],
-      ['y', null, null, null, null],
-      [null, null, null, null],
-    ]
-    const board2 = [
-      [null, null,  'x',  'x',  'x',  'x'],
-      [null, null, null, null, null, null],
-      [ 'z', null, null, null, null, null],
-      [null, null,  'o',  'o',  'o',  'o'],
-      [ 'y', null, null, null, null],
-      [null, null, null, null],
-    ]
-    expect(reverseCCW(board)).toEqual([
-      [null, 'z', null, 'x', null, null, null],
-      ['y', null, null, null, 'x', null, null],
-      [null, null, 'o', null, null, 'x', null],
-      [null, null, null, 'o', null, null, 'x'],
-      [null, null, null, null, 'o', null, null],
-      [null, null, null, null, null, 'o', null]
-    ])
+describe.only('twoOfFour', () => {
+  it('return undefined if all null', () => {
+    expect(twoOfFour(mapGrid([null, null, null, null]), 'x')).toBe(undefined)
   });
 });

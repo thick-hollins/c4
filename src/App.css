@@ -14,3 +14,9 @@ p {
     display: flex;
     flex-direction: column;
 }
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 50px);
+    grid-template-rows: 50px 10px repeat(6, 50px);
+    grid-gap: 1px;
+}

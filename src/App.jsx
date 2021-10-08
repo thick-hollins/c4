@@ -1,10 +1,9 @@
 import './App.css'
 import { generateGrid } from './generate-grid'
 import { useState, useEffect } from 'react'
-import { findKO } from './blocking'
 import { findWinner, findDraw } from './winner'
-import { findWinningMove } from './attacking'
 import { emptyY } from './sequences'
+import { findMove } from './computer-moves/find-move'
 
 const App = () => {
   const [gridActive, setGridActive] = useState(true)
@@ -43,27 +42,10 @@ const App = () => {
   }
 
   useEffect(() => { 
-    let winner = findWinner(grid)
-    let draw
-    if (!winner)
-    draw = findDraw(grid)
-    if (winner) setComplete(winner)
-    if (draw) setComplete('draw')
-    if (!winner && !draw && playing === 'o') {
-      let move
-      let winningMove = findWinningMove(grid)
-      if (winningMove) move = winningMove
-      else {
-        let block = findKO(grid)
-        if (block) move = block
-      }
-      if (!move) {
-        while (!move) {
-          let randomX = Math.floor(Math.random() * 7)
-          let y = emptyY(grid, randomX)
-        if (y !== undefined) move = { y, x: randomX }
-        }
-      }
+    let outcome = findWinner(grid) || findDraw(grid)
+    if (outcome) setComplete(outcome)
+    if (!outcome && playing === 'o') {
+      let move = findMove(grid)
       setTimeout(() => {
         setPlaced(move.x)
         setTimeout(() => {
@@ -84,11 +66,7 @@ const App = () => {
   return (
     <div className="wrapper">
       <div className="game">
-        <div style={ {
-          display: 'grid',
-          gridTemplateColumns: 'repeat(7, 50px)',
-          gridTemplateRows: '50px 10px repeat(6, 50px)',
-          gridGap: '1px' } }>
+        <div className="game-grid">
           { Array.from(Array(7)).map((_, i) => (
             <div
             key={ `${ i }` }
@@ -102,7 +80,8 @@ const App = () => {
                     ? '#001721' 
                     : playing === 'x' 
                     ? '#FFC300' 
-                    : 'red' }
+                    : 'red' 
+                  }
                 />
               </svg>
             </div>
@@ -127,7 +106,8 @@ const App = () => {
                       ? '#001721' 
                       : grid[y][x].value === 'x' 
                       ? '#FFC300' 
-                      : 'red' }
+                      : 'red' 
+                    }
                   />
                 </svg>
               </div>
